@@ -8,16 +8,16 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AuthController extends ApiController
 {
-    public function register(Request $request, HttpClientInterface $client)
+    public function register(Request $request, HttpClientInterface $client, JWTTokenManagerInterface $JWTManager)
     {
         try {
             $request = $this->transformJsonBody($request);
             $password = $request->get('password');
             $email = $request->get('email');
             if (empty($password) || empty($email)) {
-                return $this->respondValidationError("Password or Email");
+                return $this->respondValidationError("Invalid Password or Email");
             }
-            $url = $_ENV['DATA_URL'] . "register";
+            $url = $_ENV['DATA_URL'] . "admin/user/register";
             $response = $client->request(
                 'POST',
                 $url,
@@ -25,14 +25,28 @@ class AuthController extends ApiController
                     'json' => ['email' => $email, "password" => $password],
                 ]
             );
-            $data = $response->toArray();
-            return $this->respondWithSuccess($data);
+            $data = $response->toArray()['success'];
+            $userId = $data['id'];
+            $roles = $data['roles'];
+            $email = $data['email'];
+            $user = new JWTUser($email, $roles);
+            $token = $JWTManager->create($user);
+
+            $url = $_ENV['DATA_URL'] . "user/token";
+            $response = $client->request(
+                'POST',
+                $url,
+                [
+                    'json' => ['userId' => $userId, "token" => $token],
+                ]
+            );
+            return $this->respondWithSuccess("User Created");
         } catch (\Exception $e) {
-            return $this->respondValidationError("Unable to Create user");
+            return $this->respondValidationError($e->getMessage());
         }
     }
 
-    public function login(Request $request, HttpClientInterface $client, JWTTokenManagerInterface $JWTManager)
+    public function login(Request $request, HttpClientInterface $client)
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -47,11 +61,7 @@ class AuthController extends ApiController
                 ]
             );
             $data = $response->toArray()['success'];
-            $roles = $data['roles'];
-            $email = $data['username'];
-            $user = new JWTUser($email, $roles);
-            $token = $JWTManager->create($user);
-            $returnData = ["data" => $data, "token" => $token];
+            $returnData = ["data" => $data];
             return $this->respondWithSuccess($returnData);
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
