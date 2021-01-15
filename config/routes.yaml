@@ -15,9 +15,24 @@ api_user_token:
   methods: POST
 
 api_get_token:
-  path: /api/token
+  path: /token
   controller: App\Controller\UserController::getToken
   methods: GET
+
+api_user_profile:
+  path:       /api/user/me
+  controller: App\Controller\UserController::userProfile
+  methods:    GET
+
+api_user_profile_update:
+  path:       /api/user/me
+  controller: App\Controller\UserController::userProfileUpdate
+  methods:    PUT
+
+api_user_profile_delete:
+  path:       /api/user/me
+  controller: App\Controller\UserController::userProfileDelete
+  methods:    DELETE
 
 api_user_create:
   path:       /api/user
