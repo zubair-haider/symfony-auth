@@ -69,11 +69,16 @@ class UserController extends ApiController
         }
     }
 
-    public function showUser($id, HttpClientInterface $client)
+    public function showUser($id, HttpClientInterface $client, Request $request)
     {
         try {
+            $token = $request->headers->get('Authorization');
             $url = $_ENV['DATA_URL'] . "api/user/" . $id;
-            $response = $client->request('GET', $url);
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'Authorization' => $token,
+                ],
+            ]);
             $data = $response->toArray()['success'];
             return $this->respondWithSuccess($data);
         } catch (\Exception $e) {
@@ -84,11 +89,15 @@ class UserController extends ApiController
     public function updateUser($id, Request $request, HttpClientInterface $client)
     {
         try {
+            $token = $request->headers->get('Authorization');
             $request = $this->transformJsonBody($request);
             $roles = $request->get('roles');
             $url = $_ENV['DATA_URL'] . "api/user/" . $id;
             $response = $client->request('PUT', $url,
                 [
+                    'headers' => [
+                        'Authorization' => $token,
+                    ],
                     'json' => ['roles' => $roles],
                 ]);
             return $this->respondWithSuccess("User updated");
@@ -100,6 +109,7 @@ class UserController extends ApiController
     public function createUser(Request $request, HttpClientInterface $client)
     {
         try {
+            $token = $request->headers->get('Authorization');
             $request = $this->transformJsonBody($request);
             $password = $request->get('password');
             $email = $request->get('email');
@@ -113,7 +123,10 @@ class UserController extends ApiController
                 'roles' => $roles,
             ];
             $url = $_ENV['DATA_URL'] . "api/user";
-            $response = $client->request('POST', $url, ['json' => $data]);
+            $response = $client->request('POST', $url, [
+                'headers' => [
+                    'Authorization' => $token,
+                ], 'json' => $data]);
 
             return $this->respondWithSuccess("User Created");
         } catch (\Exception $e) {
@@ -121,11 +134,16 @@ class UserController extends ApiController
         }
     }
 
-    public function deleteUser($id, HttpClientInterface $client)
+    public function deleteUser($id, Request $request,HttpClientInterface $client)
     {
         try {
             $url = $_ENV['DATA_URL'] . "api/user/" . $id;
-            $response = $client->request("DELETE", $url);
+            $token = $request->headers->get('Authorization');
+            $response = $client->request("DELETE", $url, [
+                'headers' => [
+                    'Authorization' => $token,
+                ],
+            ]);
             return $this->respondWithSuccess("user deleted");
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
