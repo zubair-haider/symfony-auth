@@ -40,7 +40,9 @@ class AuthController extends ApiController
                     'json' => ['userId' => $userId, "token" => $token],
                 ]
             );
-            return $this->respondWithSuccess("User Created");
+            $data = $response->toArray()['success'];
+            $returnData = ["data"=>$data,"token"=>$token];
+            return $this->respondWithSuccess($returnData);
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
         }
@@ -61,8 +63,7 @@ class AuthController extends ApiController
                 ]
             );
             $data = $response->toArray()['success'];
-            $returnData = ["data" => $data];
-            return $this->respondWithSuccess($returnData);
+            return $this->respondWithSuccess($data);
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
         }
