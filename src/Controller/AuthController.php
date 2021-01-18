@@ -26,22 +26,7 @@ class AuthController extends ApiController
                 ]
             );
             $data = $response->toArray()['success'];
-            $userId = $data['id'];
-            $roles = $data['roles'];
-            $email = $data['email'];
-            $user = new JWTUser($email, $roles);
-            $token = $JWTManager->create($user);
-
-            $url = $_ENV['DATA_URL'] . "user/token";
-            $response = $client->request(
-                'POST',
-                $url,
-                [
-                    'json' => ['userId' => $userId, "token" => $token],
-                ]
-            );
-            $data = $response->toArray()['success'];
-            $returnData = ["data"=>$data,"token"=>$token];
+            $returnData = ["data" => $data];
             return $this->respondWithSuccess($returnData);
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
@@ -63,7 +48,25 @@ class AuthController extends ApiController
                 ]
             );
             $data = $response->toArray()['success'];
-            return $this->respondWithSuccess($data);
+
+            $userId = $data['id'];
+            $roles = $data['roles'];
+            $email = $data['email'];
+            $user = new JWTUser($email, $roles);
+            $token = $JWTManager->create($user);
+
+            $url = $_ENV['DATA_URL'] . "user/token";
+            $response = $client->request(
+                'POST',
+                $url,
+                [
+                    'json' => ['userId' => $userId, "token" => $token],
+                ]
+            );
+            $data = $response->toArray()['success'];
+            $returnData = ["data" => $data, "token" => $token];
+
+            return $this->respondWithSuccess($token);
         } catch (\Exception $e) {
             return $this->respondValidationError($e->getMessage());
         }
