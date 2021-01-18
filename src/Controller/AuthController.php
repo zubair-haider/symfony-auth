@@ -8,7 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AuthController extends ApiController
 {
-    public function register(Request $request, HttpClientInterface $client, JWTTokenManagerInterface $JWTManager)
+    public function register(Request $request, HttpClientInterface $client)
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -33,7 +33,7 @@ class AuthController extends ApiController
         }
     }
 
-    public function login(Request $request, HttpClientInterface $client)
+    public function login(Request $request, HttpClientInterface $client, JWTTokenManagerInterface $JWTManager)
     {
         try {
             $request = $this->transformJsonBody($request);
