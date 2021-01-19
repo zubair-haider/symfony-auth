@@ -4,11 +4,11 @@ namespace App\Controller;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Service\ApiClient;
 
 class AuthController extends ApiController
 {
-    public function register(Request $request, HttpClientInterface $client)
+    public function register(Request $request, ApiClient $client)
     {
         try {
             $request = $this->transformJsonBody($request);
@@ -33,7 +33,7 @@ class AuthController extends ApiController
         }
     }
 
-    public function login(Request $request, HttpClientInterface $client, JWTTokenManagerInterface $JWTManager)
+    public function login(Request $request, ApiClient $client, JWTTokenManagerInterface $JWTManager)
     {
         try {
             $request = $this->transformJsonBody($request);

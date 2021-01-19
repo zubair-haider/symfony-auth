@@ -5,7 +5,7 @@ namespace App\Controller;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Service\ApiClient;
 
 class UserController extends ApiController
 {
@@ -16,7 +16,7 @@ class UserController extends ApiController
         return $this->respondWithSuccess($token);
     }
 
-    public function userProfile(HttpClientInterface $client, Request $request)
+    public function userProfile(ApiClient $client, Request $request)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -33,7 +33,7 @@ class UserController extends ApiController
         }
     }
 
-    public function userProfileUpdate(Request $request, HttpClientInterface $client)
+    public function userProfileUpdate(Request $request, ApiClient $client)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -53,7 +53,7 @@ class UserController extends ApiController
         }
     }
 
-    public function userProfileDelete(HttpClientInterface $client)
+    public function userProfileDelete(ApiClient $client)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -69,7 +69,7 @@ class UserController extends ApiController
         }
     }
 
-    public function showUser($id, HttpClientInterface $client, Request $request)
+    public function showUser($id, ApiClient $client, Request $request)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -86,7 +86,7 @@ class UserController extends ApiController
         }
     }
 
-    public function updateUser($id, Request $request, HttpClientInterface $client)
+    public function updateUser($id, Request $request, ApiClient $client)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -106,7 +106,7 @@ class UserController extends ApiController
         }
     }
 
-    public function createUser(Request $request, HttpClientInterface $client)
+    public function createUser(Request $request, ApiClient $client)
     {
         try {
             $token = $request->headers->get('Authorization');
@@ -134,7 +134,7 @@ class UserController extends ApiController
         }
     }
 
-    public function deleteUser($id, Request $request,HttpClientInterface $client)
+    public function deleteUser($id, Request $request,ApiClient $client)
     {
         try {
             $url = $_ENV['DATA_URL'] . "api/user/" . $id;
